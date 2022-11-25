@@ -30,8 +30,10 @@ namespace ModularApi.Api
         /// </summary>
         public void BuildDevModules()
         {
-            var modules = _configuration.GetValue<string[]>("Modules");
+            var modules = _configuration.GetSection("Modules").Get<string[]>();
             var debugPath = @"bin\Debug";
+
+            if (modules is null) return;
 
             Log.Logger.Information($"Build {modules.Length} module(s)");
 
@@ -194,7 +196,7 @@ namespace ModularApi.Api
         /// <exception cref="Exception"></exception>
         public void ValidateModules()
         {
-            var lackingModules = _configuration.GetValue<string[]>("RequiredModules")
+            var lackingModules = _configuration.GetSection("RequiredModules").Get<string[]>()
                 ?.Where(m => !_moduleNames.Contains(m));
 
             if (lackingModules is not null && lackingModules.Any())
